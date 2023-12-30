@@ -1,4 +1,37 @@
-game();
+const controls = document.querySelector('#controls');
+const restartButton = document.querySelector('#restart');
+const actionButtons = document.querySelectorAll('.options');
+const showResult = document.querySelector('#result');
+const computerResult = document.querySelector('#computer');
+const playerResult = document.querySelector('#player');
+
+let computerScore = 0;
+let userScore = 0;
+
+controls.addEventListener('click', (event) => {
+    const choice = event.target.id;
+    if (choice === 'controls') return;
+
+    const result = playRound(choice, getComputerChoice());
+    showResult.innerText = result;
+
+    if (result.includes('win')) {
+        userScore++;
+        playerResult.textContent = userScore;
+    }
+    else if (result.includes('lose')) {
+        computerScore++;
+        computerResult.textContent = computerScore;
+    }
+
+    if (userScore == 5 || computerScore == 5) {
+        actionButtons.forEach(element => element.disabled = true);
+        (userScore > computerScore) ? showResult.innerText = 'You won the game!' : 
+        showResult.innerText = 'The computer won!';
+    }
+});
+
+restartButton.addEventListener('click', restartGame);
 
 function getComputerChoice() {
     let randomNumber = Math.trunc(Math.random() * 3);
@@ -38,25 +71,13 @@ function playRound(playerSelection, computerSelection) {
     }
 }
 
-function game() {
-    let playerSelection, computerSelection, result;
-    let computerScore = 0;
-    let userScore = 0;
+function restartGame() {
+    userScore = 0;
+    computerScore = 0;
 
-    for (let i = 0; i < 5; i++) {
-        playerSelection = prompt('Rock, Paper or Scissors?').toLowerCase()
-        computerSelection = getComputerChoice();
+    playerResult.textContent = userScore;
+    computerResult.textContent = computerScore;
+    showResult.innerText = ''
 
-        result = playRound(playerSelection, computerSelection);
-        console.log(result);
-
-        if (result.includes('win')) {
-            userScore++;
-        }
-        else if (result.includes('lose')) {
-            computerScore++;
-        }
-    }
-
-    (userScore > computerScore) ? console.log('You won!') : (computerScore > userScore) ? console.log('You lost!') : 'It\'s a tie';
+    actionButtons.forEach(element => element.disabled = false);
 }
